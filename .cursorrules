@@ -1,0 +1,22 @@
+# 🤖 AI Agent Context & Rules
+
+If you are an AI coding assistant (Cursor, Windsurf, Aider, Antigravity, Devin, etc.) reading this file, you must adhere to the following architectural constraints and context for this project:
+
+## Project Context: "Shelf Aware Pro"
+We started out building a standard B2B dashboard for Sales Reps, but we executed a **V2 Pivot**. We now focus on a **Distributor-First WhatsApp interface**. 
+Instead of waiting for daily orders, our system runs an LP optimization (Mixed Integer Linear Programming via `javascript-lp-solver`) to predict when a distributor will run out of stock. It automatically sends them a WhatsApp-style message proposing a restock order.
+
+## Core Architecture
+- **Framework:** Next.js 15 (App Router) + React 19 + Tailwind CSS v4.
+- **Database:** Supabase PostgreSQL. (Tables: `distributors_new`, `skus_new`, `historical_data_new`, `bot_interactions`, `ml_feedback_loop`).
+- **NLP / AI Parsing:** We use the Gemini 3.5 Flash model (via REST API in `/api/chat/route.ts`) to parse unstructured distributor chat messages (e.g. "I'll take 50 instead") into strict JSON intents (`approve_order`, `cancel_order`, `modify_demand`).
+
+## Crucial Implementation Rules
+1. **The Dual Interface:** 
+   - `src/app/dashboard/*` is the internal Sales Rep view. It is READ-ONLY. Do not add chat actions here. It exists to monitor stockouts and inventory.
+   - `src/app/distributor/[id]/*` is the external Distributor view. It heavily mimics WhatsApp Web. All interactive ordering happens here.
+2. **Database Updates:** When a distributor approves or modifies an order via the chat, the `/api/chat/route.ts` endpoint is responsible for instantly updating the `current_inventory` in `skus_new` and logging the NLP feedback into `ml_feedback_loop`.
+3. **No Webpack/Turbopack tampering:** This project uses Next.js 15 with Turbopack by default. Do not change the bundler settings unless strictly necessary.
+4. **Environment Variables:** The app relies on `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `GEMINI_API_KEY`. Do not hardcode these keys anywhere in the application source.
+
+Read the components in `src/components/DistributorChatClient.tsx` and `src/app/api/chat/route.ts` to understand the core feedback loop before making any modifications to the order pipeline.
