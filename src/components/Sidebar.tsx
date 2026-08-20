@@ -1,20 +1,40 @@
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { PackageSearch } from 'lucide-react';
 
+const FALLBACK_DISTRIBUTORS = [
+  { id: 1, name: "Apex Wholesale Dist." },
+  { id: 2, name: "Metro Beverage Partners" },
+  { id: 3, name: "Pacific Goods Supply" }
+];
+
 export default async function Sidebar() {
-  const { data: distributors, error } = await supabase.from('distributors_new').select('*');
+  let distributors = FALLBACK_DISTRIBUTORS;
+  let hasError = false;
+
+  if (isSupabaseConfigured) {
+    try {
+      const { data, error } = await supabase.from('distributors_new').select('*');
+      if (!error && data && data.length > 0) {
+        distributors = data;
+      }
+    } catch {
+      hasError = true;
+    }
+  }
 
   return (
     <div className="w-64 bg-brand-navy text-white flex flex-col h-screen shrink-0 border-r border-brand-navy-dark">
       <div className="p-6 border-b border-brand-navy-dark flex items-center gap-3">
         <PackageSearch className="w-6 h-6 text-brand-teal" />
-        <h1 className="text-xl font-semibold tracking-tight">Shelf Aware Pro</h1>
+        <Link href="/" className="text-xl font-semibold tracking-tight hover:text-brand-teal transition-colors">
+          Shelf Aware Pro
+        </Link>
       </div>
       <div className="p-4 flex-1 overflow-y-auto">
         <h2 className="text-xs uppercase tracking-wider text-gray-400 mb-4 font-medium px-2">Distributors</h2>
         <ul className="space-y-1">
-          {distributors?.map((dist) => (
+          {distributors.map((dist) => (
             <li key={dist.id}>
               <Link 
                 href={`/dashboard/${dist.id}`}
@@ -24,11 +44,8 @@ export default async function Sidebar() {
               </Link>
             </li>
           ))}
-          {(!distributors || distributors.length === 0) && !error && (
+          {distributors.length === 0 && !hasError && (
             <p className="text-sm text-gray-400 px-2 italic">No distributors found.</p>
-          )}
-          {error && (
-            <p className="text-sm text-red-400 px-2">Error loading distributors.</p>
           )}
         </ul>
       </div>
