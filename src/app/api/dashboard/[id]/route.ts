@@ -50,7 +50,7 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
     if (last30Days.length > 0) {
       // Use ML Linear Regression for Forecasting instead of Simple Moving Average
       // Map data to [x, y] coordinates where x is the day index and y is the units sold
-      const dataPoints = last30Days.map((h, idx) => [idx, h.units_sold]);
+      const dataPoints: [number, number][] = last30Days.map((h, idx) => [idx, h.units_sold]);
       
       const result = regression.linear(dataPoints);
       
