@@ -16,8 +16,9 @@
   --color-brand-navy-dark: var(--navy-dark);
   --color-brand-teal: var(--teal);
   --color-brand-teal-light: var(--teal-light);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-outfit), sans-serif;
   --font-mono: var(--font-geist-mono);
+  --font-geist: var(--font-geist-sans), sans-serif;
 }
 
 body {

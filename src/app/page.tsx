@@ -2,6 +2,7 @@ import { BarChart3, Bot, Box, Users, Truck, Sparkles, ArrowRight, ShieldCheck, C
 import Link from "next/link";
 import Image from "next/image";
 import { ShaderBackground } from "@/components/ui/manu";
+import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 
 export default function Home() {
   return (
@@ -31,9 +32,21 @@ export default function Home() {
             </h1>
           </div>
 
-          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
-            AI-driven predictive inventory optimization with proactive WhatsApp-style conversational ordering.
-          </p>
+          <div className="flex flex-col items-center">
+            <p className="text-lg md:text-xl text-slate-350 max-w-2xl mx-auto leading-relaxed font-light">
+              AI-driven predictive inventory optimization with
+            </p>
+            <TypewriterEffectSmooth
+              words={[
+                { text: "proactive", className: "text-teal-400 font-medium" },
+                { text: "WhatsApp-style", className: "text-teal-400 font-medium" },
+                { text: "conversational", className: "text-cyan-400 font-medium" },
+                { text: "ordering.", className: "text-cyan-300 font-semibold" }
+              ]}
+              className="my-1 justify-center text-center text-sm md:text-lg lg:text-xl"
+              cursorClassName="bg-teal-400 h-5 sm:h-6 xl:h-8"
+            />
+          </div>
         </header>
 
         {/* Portal Cards */}
