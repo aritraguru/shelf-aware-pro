@@ -47,11 +47,15 @@ function parseHeuristic(message: string) {
 export async function POST(request: Request) {
   let message = "";
   let distributorId: any = 1;
+  let language = "en";
+  let simulatedDate: string | null = null;
 
   try {
     const body = await request.json();
     message = body.message || "";
     distributorId = body.distributorId || 1;
+    if (body.language) language = body.language;
+    if (body.simulatedDate) simulatedDate = body.simulatedDate;
   } catch {
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
@@ -75,7 +79,10 @@ Return ONLY valid JSON matching this exact schema:
   "sentiment": "positive" | "critical" | "neutral",
   "responseText": "A brief, polite, human-like confirmation message to send back to the user.",
   "newDemand": null // ONLY if intent is modify_demand, extract and put the requested numerical quantity here. Otherwise null.
-}`
+}
+
+CRITICAL: Translate the 'responseText' into the language code '${language}'. If '${language}' is 'en', use English. If it is 'hi', use Hindi. If 'gu' use Gujarati, 'bn' use Bengali, 'ta' use Tamil, 'te' use Telugu. 
+DO NOT translate any product or SKU names. Keep numerical quantities in standard digits.`
             }]
           },
           contents: [{ role: "user", parts: [{ text: message }] }],
@@ -134,6 +141,20 @@ Return ONLY valid JSON matching this exact schema:
             .from('skus_new')
             .update({ current_inventory: (targetSku.current_inventory || 0) + qtyToAdd })
             .eq('id', targetSku.id);
+            
+          // Add this order to the historical graph data
+          let orderDate = new Date();
+          if (simulatedDate) {
+            const parsed = new Date(simulatedDate);
+            if (!isNaN(parsed.getTime())) orderDate = parsed;
+          }
+          await supabase
+            .from('historical_data_new')
+            .insert({
+              sku_id: targetSku.id,
+              date: orderDate.toISOString().split('T')[0],
+              units_sold: qtyToAdd
+            });
         }
       }
     } catch (dbError) {

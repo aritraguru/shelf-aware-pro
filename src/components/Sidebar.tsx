@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { PackageSearch } from 'lucide-react';
+import Image from "next/image";
 
 const FALLBACK_DISTRIBUTORS = [
   { id: 1, name: "Apex Wholesale Dist." },
@@ -24,15 +24,15 @@ export default async function Sidebar() {
   }
 
   return (
-    <div className="w-64 bg-brand-navy text-white flex flex-col h-screen shrink-0 border-r border-brand-navy-dark">
-      <div className="p-6 border-b border-brand-navy-dark flex items-center gap-3">
-        <PackageSearch className="w-6 h-6 text-brand-teal" />
-        <Link href="/" className="text-xl font-semibold tracking-tight hover:text-brand-teal transition-colors">
+    <div className="w-80 bg-slate-950/60 backdrop-blur-md text-slate-100 flex flex-col h-screen shrink-0 border-r border-slate-800/80">
+      <div className="p-6 border-b border-slate-800/80 flex items-center gap-3">
+        <Image src="/logo.svg" alt="Shelf Aware Logo" width={32} height={32} className="brightness-200" />
+        <Link href="/" className="text-xl font-semibold tracking-tight hover:text-teal-400 transition-colors">
           Shelf Aware Pro
         </Link>
       </div>
       <div className="p-4 flex-1 overflow-y-auto">
-        <h2 className="text-xs uppercase tracking-wider text-gray-400 mb-4 font-medium px-2">Distributors</h2>
+        <h2 className="text-xs uppercase tracking-wider text-slate-400 mb-4 font-medium px-2">Distributors</h2>
         <ul className="space-y-1">
           {distributors.map((dist) => (
             <li key={dist.id}>
@@ -45,7 +45,7 @@ export default async function Sidebar() {
             </li>
           ))}
           {distributors.length === 0 && !hasError && (
-            <p className="text-sm text-gray-400 px-2 italic">No distributors found.</p>
+            <p className="text-sm text-slate-400 px-2 italic">No distributors found.</p>
           )}
         </ul>
       </div>

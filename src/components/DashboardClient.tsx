@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import SkuChart from "./SkuChart";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardClient({ distributorId }: { distributorId: string }) {
   const [data, setData] = useState<any>(null);
@@ -11,12 +12,34 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
   const [orderStatus, setOrderStatus] = useState<string>("Pending Review");
   const [modifiedDemand, setModifiedDemand] = useState<{ [skuId: number]: number }>({});
 
+  const [simulatedDate, setSimulatedDate] = useState<string>("");
+
+  useEffect(() => {
+    const handleDateChange = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setSimulatedDate(customEvent.detail.date);
+    };
+    const handleReset = () => {
+      setSimulatedDate(""); // Or today
+    };
+
+    window.addEventListener('simulated_date_changed', handleDateChange);
+    window.addEventListener('reset_simulation', handleReset);
+    return () => {
+      window.removeEventListener('simulated_date_changed', handleDateChange);
+      window.removeEventListener('reset_simulation', handleReset);
+    };
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/dashboard/${distributorId}`);
+        const url = simulatedDate 
+          ? `/api/dashboard/${distributorId}?date=${encodeURIComponent(simulatedDate)}`
+          : `/api/dashboard/${distributorId}`;
+        const res = await fetch(url);
         if (!res.ok) {
           throw new Error("Failed to fetch dashboard data");
         }
@@ -29,7 +52,7 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
       }
     };
     fetchData();
-  }, [distributorId]);
+  }, [distributorId, simulatedDate]);
 
   if (loading) {
     return (
@@ -77,37 +100,48 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto p-8 pb-32">
-        <header className="mb-8 flex justify-between items-end">
+      <div className="flex-1 h-full flex flex-col p-8 overflow-hidden">
+        <header className="mb-6 flex justify-between items-end shrink-0">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-brand-navy mb-2">
+            <Link href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-teal-400 transition-colors mb-4 text-sm font-medium">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </Link>
+            <h1 className="text-3xl font-semibold tracking-tight text-white mb-2 drop-shadow-md">
               {distributor.name}
             </h1>
-            <p className="text-gray-500">
-              Credit Limit: <span className="font-semibold text-gray-700">${distributor.credit_limit.toLocaleString()}</span>
+            <p className="text-slate-300 drop-shadow-sm">
+              Credit Limit: <span className="font-semibold text-teal-400">${distributor.credit_limit.toLocaleString()}</span>
             </p>
           </div>
           <div>
-            <div className={`px-4 py-1.5 rounded-full text-sm font-semibold border ${
-              orderStatus.includes('Approved') ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-              orderStatus.includes('Hold') ? 'bg-red-100 text-red-700 border-red-200' :
-              orderStatus === 'Modified' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-              'bg-gray-100 text-gray-700 border-gray-200'
+            <div className={`px-4 py-1.5 rounded-full text-sm font-semibold border backdrop-blur-md ${
+              orderStatus.includes('Approved') ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' :
+              orderStatus.includes('Hold') ? 'bg-red-500/20 text-red-300 border-red-500/30' :
+              orderStatus === 'Modified' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
+              'bg-slate-800/50 text-slate-300 border-slate-700/50'
             }`}>
               {orderStatus}
             </div>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 gap-6 mb-8">
-          <div className="space-y-6">
-            <h2 className="text-xl font-medium tracking-tight text-gray-800">SKU Inventory & Stockout Forecast</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="flex-1 min-h-0 flex flex-col">
+          <h2 className="text-xl font-medium tracking-tight text-slate-200 drop-shadow-md mb-4 shrink-0">SKU Inventory & Stockout Forecast</h2>
+          <div className="flex-1 min-h-0 min-w-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
               {displaySkus.map((sku: any) => (
-                <SkuChart key={sku.id} sku={sku} />
+                <div key={sku.id} className="h-full min-h-0">
+                  <SkuChart 
+                    sku={sku} 
+                    simulatedDate={simulatedDate} 
+                    distributorName={distributor.name}
+                    distributorId={distributorId}
+                  />
+                </div>
               ))}
               {displaySkus.length === 0 && (
-                <div className="text-gray-400 italic py-8">No SKUs found for this distributor.</div>
+                <div className="text-slate-400 italic py-8">No SKUs found for this distributor.</div>
               )}
             </div>
           </div>

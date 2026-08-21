@@ -16,19 +16,27 @@ const MOCK_SKUS = [
   { id: 4, distributor_id: 1, name: "Matcha Latte Cans 12pk", current_inventory: 8, cost: 26.0, margin: 14.5, lead_time_days: 3 },
 ];
 
-function generateMockHistory(skuId: number) {
+function generateMockHistory(skuId: number, baseDateObj: Date) {
   const history = [];
-  const now = new Date();
+  const now = baseDateObj;
+  
+  const baseOrderQty = skuId === 1 ? 150 : skuId === 2 ? 80 : skuId === 3 ? 120 : 60;
+  const offset = skuId % 3;
+  
   for (let i = 29; i >= 0; i--) {
     const d = new Date(now);
     d.setDate(d.getDate() - i);
-    const base = skuId === 1 ? 25 : skuId === 2 ? 18 : skuId === 3 ? 30 : 15;
-    const noise = Math.floor(Math.sin(i) * 5 + (i % 3) * 3);
+    
+    let units_sold = 0;
+    if (i % 7 === (skuId % 7)) {
+       units_sold = baseOrderQty + Math.floor(Math.random() * 20 - 10);
+    }
+    
     history.push({
       id: 1000 + i,
       sku_id: skuId,
       date: d.toISOString().split('T')[0],
-      units_sold: Math.max(5, base + noise)
+      units_sold
     });
   }
   return history;
@@ -36,6 +44,16 @@ function generateMockHistory(skuId: number) {
 
 export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
+  const url = new URL(request.url);
+  const simulatedDateStr = url.searchParams.get('date');
+  
+  let baseDateObj = new Date();
+  if (simulatedDateStr) {
+    const parsed = new Date(simulatedDateStr);
+    if (!isNaN(parsed.getTime())) {
+      baseDateObj = parsed;
+    }
+  }
 
   let distributor = null;
   let skus: any[] = [];
@@ -73,12 +91,15 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
     }
   }
 
-  // Fallback to mock data if Supabase isn't configured or data is missing
   if (!distributor) {
     distributor = MOCK_DISTRIBUTORS[id] || { id: Number(id) || 1, name: `Distributor ${id}`, credit_limit: 50000 };
     skus = MOCK_SKUS.map(s => ({ ...s, distributor_id: Number(id) || 1 }));
-    historicalData = skus.flatMap(s => generateMockHistory(s.id));
+    historicalData = skus.flatMap(s => generateMockHistory(s.id, baseDateObj));
   }
+
+  // Filter historical data up to simulatedDate
+  const cutoffTime = baseDateObj.getTime() + (24 * 60 * 60 * 1000) - 1; // End of simulated day
+  historicalData = historicalData.filter(h => new Date(h.date).getTime() <= cutoffTime);
 
   // Process data for charts and ML forecast
   const skusWithData = skus.map(sku => {
@@ -86,20 +107,49 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
       .filter(h => h.sku_id === sku.id)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     
-    const last30Days = skuHistory.length > 0 ? skuHistory.slice(-30) : generateMockHistory(sku.id);
+    // We want the last 30 days BEFORE baseDateObj
+    const past30Days = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(baseDateObj);
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const existing = skuHistory.find(h => h.date === dateStr);
+      if (existing) {
+        past30Days.push(existing);
+      } else {
+        past30Days.push({ sku_id: sku.id, date: dateStr, units_sold: 0 });
+      }
+    }
     
-    let forecastedDemand = 20;
-    if (last30Days.length > 0) {
-      const dataPoints: [number, number][] = last30Days.map((h, idx) => [idx, h.units_sold]);
-      const result = regression.linear(dataPoints);
-      const prediction = result.predict(last30Days.length)[1];
-      forecastedDemand = Math.max(5, Math.ceil(prediction));
+    let forecastedDemand = 0;
+    let nextOrderDate = "Unknown";
+    
+    const orderEvents = skuHistory.filter(h => h.units_sold > 0);
+    if (orderEvents.length > 0) {
+      const orderDates = orderEvents.map(h => new Date(h.date).getTime());
+      
+      if (orderDates.length >= 2) {
+        const intervals = [];
+        for (let i = 1; i < orderDates.length; i++) {
+          intervals.push((orderDates[i] - orderDates[i-1]) / (1000 * 60 * 60 * 24));
+        }
+        const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const lastOrderTime = orderDates[orderDates.length - 1];
+        const nextTime = lastOrderTime + avgInterval * (1000 * 60 * 60 * 24);
+        nextOrderDate = new Date(nextTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } else {
+        nextOrderDate = new Date(orderDates[0] + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+      
+      const avgSize = orderEvents.reduce((acc, h) => acc + h.units_sold, 0) / orderEvents.length;
+      forecastedDemand = Math.max(5, Math.ceil(avgSize));
     }
 
     return {
       ...sku,
-      history: last30Days,
+      history: past30Days,
       forecastedDemand,
+      nextOrderDate,
     };
   });
 
