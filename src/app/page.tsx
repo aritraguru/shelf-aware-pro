@@ -1,6 +1,5 @@
 import { BarChart3, Bot, Box, Users, Truck, Sparkles, ArrowRight, ShieldCheck, Cpu, Database } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { ShaderBackground } from "@/components/ui/manu";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 
@@ -55,33 +54,23 @@ export default function Home() {
           <Link href="/dashboard/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
             <div className="absolute inset-0 bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/60 rounded-3xl transition-all duration-300 group-hover:border-teal-500/50 group-hover:shadow-2xl group-hover:shadow-teal-500/10" />
             
-            <div className="relative p-8 flex flex-col h-full justify-between z-10">
+            <div className="relative p-8 md:p-10 flex flex-col h-full justify-between z-10 min-h-[300px]">
               <div>
-                <div className="relative h-44 w-full rounded-2xl overflow-hidden mb-6 border border-slate-700/40">
-                  <Image
-                    src="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80"
-                    alt="Warehouse inventory dashboard"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105 filter brightness-75 group-hover:brightness-90"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-                  <div className="absolute bottom-3 left-3 flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-900/80 backdrop-blur-md border border-slate-700/60 text-xs text-teal-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
+                    <Users className="w-7 h-7" />
+                  </div>
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/40 text-xs text-teal-300 font-medium">
                     <BarChart3 className="w-3.5 h-3.5" />
                     <span>Real-time Telemetry</span>
-                  </div>
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
-                    <Users className="w-6 h-6" />
-                  </div>
-                  <h2 className="text-2xl font-semibold text-white group-hover:text-teal-300 transition-colors">
-                    Sales Rep View
-                  </h2>
-                </div>
+                <h2 className="text-2xl md:text-3xl font-semibold text-white group-hover:text-teal-300 transition-colors mb-4">
+                  Sales Rep View
+                </h2>
 
-                <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-6">
+                <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-8">
                   Internal monitoring console to observe upcoming stockouts, verify MILP-driven restock allocations, and track AI bot outreach telemetry.
                 </p>
               </div>
@@ -97,33 +86,23 @@ export default function Home() {
           <Link href="/distributor/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 to-teal-950/70 backdrop-blur-xl border border-slate-700/60 rounded-3xl transition-all duration-300 group-hover:border-cyan-400/50 group-hover:shadow-2xl group-hover:shadow-cyan-500/10" />
 
-            <div className="relative p-8 flex flex-col h-full justify-between z-10">
+            <div className="relative p-8 md:p-10 flex flex-col h-full justify-between z-10 min-h-[300px]">
               <div>
-                <div className="relative h-44 w-full rounded-2xl overflow-hidden mb-6 border border-slate-700/40">
-                  <Image
-                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"
-                    alt="Distributor logistics warehouse"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105 filter brightness-75 group-hover:brightness-90"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-                  <div className="absolute bottom-3 left-3 flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-900/80 backdrop-blur-md border border-slate-700/60 text-xs text-cyan-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+                    <Truck className="w-7 h-7" />
+                  </div>
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/40 text-xs text-cyan-300 font-medium">
                     <Bot className="w-3.5 h-3.5" />
                     <span>Gemini 3.5 Conversational Loop</span>
-                  </div>
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
-                    <Truck className="w-6 h-6" />
-                  </div>
-                  <h2 className="text-2xl font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                    Distributor View
-                  </h2>
-                </div>
+                <h2 className="text-2xl md:text-3xl font-semibold text-white group-hover:text-cyan-300 transition-colors mb-4">
+                  Distributor View
+                </h2>
 
-                <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-6">
+                <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-8">
                   Distributor-first WhatsApp interface where clients receive automated restock triggers and approve, modify, or reject orders seamlessly.
                 </p>
               </div>
