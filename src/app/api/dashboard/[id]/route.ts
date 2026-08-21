@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import solver from 'javascript-lp-solver';
 import regression from 'regression';
@@ -32,10 +33,14 @@ function generateMockHistory(skuId: number, baseDateObj: Date) {
        units_sold = baseOrderQty + Math.floor(Math.random() * 20 - 10);
     }
     
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    
     history.push({
       id: 1000 + i,
       sku_id: skuId,
-      date: d.toISOString().split('T')[0],
+      date: `${yyyy}-${mm}-${dd}`,
       units_sold
     });
   }
@@ -112,10 +117,14 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
     for (let i = 29; i >= 0; i--) {
       const d = new Date(baseDateObj);
       d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
-      const existing = skuHistory.find(h => h.date === dateStr);
-      if (existing) {
-        past30Days.push(existing);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}-${mm}-${dd}`;
+      const matchingEvents = skuHistory.filter(h => h.date === dateStr);
+      if (matchingEvents.length > 0) {
+        const totalSales = matchingEvents.reduce((acc, curr) => acc + curr.units_sold, 0);
+        past30Days.push({ sku_id: sku.id, date: dateStr, units_sold: totalSales });
       } else {
         past30Days.push({ sku_id: sku.id, date: dateStr, units_sold: 0 });
       }

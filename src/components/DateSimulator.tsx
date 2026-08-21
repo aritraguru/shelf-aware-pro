@@ -23,6 +23,8 @@ export default function DateSimulator() {
   const handleReset = () => {
     if (!baseDate) return;
     setCurrentDate(baseDate);
+    const formatted = baseDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    localStorage.setItem('global_simulated_date', formatted);
     window.dispatchEvent(new CustomEvent('reset_simulation'));
     
     // Globally clear all distributor chat history and alerts from localStorage
@@ -35,6 +37,7 @@ export default function DateSimulator() {
   useEffect(() => {
     if (!currentDate) return;
     const formatted = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    localStorage.setItem('global_simulated_date', formatted);
     window.dispatchEvent(new CustomEvent('simulated_date_changed', { detail: { date: formatted } }));
   }, [currentDate]);
 

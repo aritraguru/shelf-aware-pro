@@ -15,6 +15,12 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
   const [simulatedDate, setSimulatedDate] = useState<string>("");
 
   useEffect(() => {
+    // Check localStorage first
+    const saved = localStorage.getItem('global_simulated_date');
+    if (saved) {
+      setSimulatedDate(saved);
+    }
+
     const handleDateChange = (e: Event) => {
       const customEvent = e as CustomEvent;
       setSimulatedDate(customEvent.detail.date);
@@ -37,9 +43,9 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
       setError(null);
       try {
         const url = simulatedDate 
-          ? `/api/dashboard/${distributorId}?date=${encodeURIComponent(simulatedDate)}`
-          : `/api/dashboard/${distributorId}`;
-        const res = await fetch(url);
+          ? `/api/dashboard/${distributorId}?date=${encodeURIComponent(simulatedDate)}&_t=${Date.now()}`
+          : `/api/dashboard/${distributorId}?_t=${Date.now()}`;
+        const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) {
           throw new Error("Failed to fetch dashboard data");
         }

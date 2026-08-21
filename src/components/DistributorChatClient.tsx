@@ -58,13 +58,18 @@ export default function DistributorChatClient({ distributorId }: { distributorId
   const [simulatedDate, setSimulatedDate] = useState<string>("");
   const [language, setLanguage] = useState("en");
 
-  // Load language from localStorage on mount
+  // Load language and date from localStorage on mount
   useEffect(() => {
     const savedLang = localStorage.getItem(`chat_language_${distributorId}`);
     if (savedLang) {
       setLanguage(savedLang);
     } else {
       setLanguage("en");
+    }
+
+    const savedDate = localStorage.getItem('global_simulated_date');
+    if (savedDate) {
+      setSimulatedDate(savedDate);
     }
   }, [distributorId]);
 
@@ -223,7 +228,7 @@ export default function DistributorChatClient({ distributorId }: { distributorId
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage, distributorId, language }),
+        body: JSON.stringify({ message: userMessage, distributorId, language, simulatedDate: activeDate }),
       });
       const responseData = await res.json();
       

@@ -148,11 +148,17 @@ DO NOT translate any product or SKU names. Keep numerical quantities in standard
             const parsed = new Date(simulatedDate);
             if (!isNaN(parsed.getTime())) orderDate = parsed;
           }
+          
+          const yyyy = orderDate.getFullYear();
+          const mm = String(orderDate.getMonth() + 1).padStart(2, '0');
+          const dd = String(orderDate.getDate()).padStart(2, '0');
+          const localDateStr = `${yyyy}-${mm}-${dd}`;
+          
           await supabase
             .from('historical_data_new')
             .insert({
               sku_id: targetSku.id,
-              date: orderDate.toISOString().split('T')[0],
+              date: localDateStr,
               units_sold: qtyToAdd
             });
         }

@@ -5,10 +5,14 @@ import { Send } from "lucide-react";
 export default function SkuChart({ sku, simulatedDate, distributorName, distributorId }: { sku: any, simulatedDate: string, distributorName: string, distributorId: string }) {
   const [justSent, setJustSent] = useState(false);
 
-  const data = sku.history.map((h: any) => ({
-    date: new Date(h.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-    sales: h.units_sold,
-  }));
+  const data = sku.history.map((h: any) => {
+    const [y, m, d] = h.date.split('-');
+    const dateObj = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+    return {
+      date: dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      sales: h.units_sold,
+    };
+  });
 
   const simDate = simulatedDate ? new Date(simulatedDate) : new Date();
   const nextDate = new Date(sku.nextOrderDate);
