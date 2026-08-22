@@ -6,15 +6,15 @@ import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 
 export default function Home() {
   return (
-    <main className="relative h-full w-full overflow-y-auto overflow-x-hidden bg-transparent text-slate-100 flex flex-col justify-between">
+    <main className="relative h-full w-full overflow-hidden bg-transparent text-slate-100 flex flex-col justify-between">
       {/* Foreground Content */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-4 flex-1 flex flex-col justify-center min-h-0 overflow-y-auto">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-2 flex-1 flex flex-col justify-center min-h-0">
         
         {/* Navigation / Top Badge */}
-        <header className="mb-8 text-center">
-          <div className="flex flex-col items-center justify-center gap-4 mb-4">
-            <Logo className="w-full max-w-[320px] h-auto drop-shadow-2xl" />
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white drop-shadow-sm mt-2">
+        <header className="mb-4 text-center">
+          <div className="flex flex-col items-center justify-center gap-2 mb-2">
+            <Logo className="w-full max-w-[260px] h-auto drop-shadow-2xl" />
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white drop-shadow-sm mt-1">
               Shelf Aware <span className="bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent">Pro</span>
             </h1>
           </div>
@@ -37,16 +37,16 @@ export default function Home() {
         </header>
 
         {/* Portal Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
           {/* Card 1: Internal Dashboard View */}
           <Link data-tour="sales-dashboard-link-1" href="/dashboard/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 to-teal-950/70 backdrop-blur-xl border border-slate-700/60 rounded-3xl transition-all duration-300 group-hover:border-teal-400/50 group-hover:shadow-2xl group-hover:shadow-teal-500/10" />
 
-            <div className="relative p-6 md:p-8 flex flex-col h-full justify-between z-10 min-h-[220px]">
+            <div className="relative p-5 md:p-6 flex flex-col h-full justify-between z-10 min-h-[200px]">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2.5 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
-                    <BarChart3 className="w-6 h-6" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
+                    <BarChart3 className="w-5 h-5" />
                   </div>
                   <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/40 text-xs text-teal-300 font-medium">
                     <Bot className="w-3.5 h-3.5" />
@@ -74,11 +74,11 @@ export default function Home() {
           <Link data-tour="chat-link-1" href="/distributor/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 to-teal-950/70 backdrop-blur-xl border border-slate-700/60 rounded-3xl transition-all duration-300 group-hover:border-cyan-400/50 group-hover:shadow-2xl group-hover:shadow-cyan-500/10" />
 
-            <div className="relative p-6 md:p-8 flex flex-col h-full justify-between z-10 min-h-[220px]">
+            <div className="relative p-5 md:p-6 flex flex-col h-full justify-between z-10 min-h-[200px]">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
-                    <Truck className="w-6 h-6" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+                    <Truck className="w-5 h-5" />
                   </div>
                   <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/40 text-xs text-cyan-300 font-medium">
                     <Bot className="w-3.5 h-3.5" />
@@ -104,11 +104,6 @@ export default function Home() {
         </div>
 
       </div>
-
-      {/* Footer */}
-      <footer className="relative z-10 py-6 text-center text-xs text-slate-500 border-t border-slate-900/80">
-        Shelf Aware Pro V2 • Powered by Next.js, Tailwind CSS & WebGL Shader Builder
-      </footer>
     </main>
   );
 }
