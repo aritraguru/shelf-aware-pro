@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
+import { useTour } from "./TourProvider";
 
 export default function DateSimulator() {
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [baseDate, setBaseDate] = useState<Date | null>(null);
+  const { isActive } = useTour();
 
   useEffect(() => {
     const now = new Date();
@@ -41,6 +43,37 @@ export default function DateSimulator() {
     window.dispatchEvent(new CustomEvent('simulated_date_changed', { detail: { date: formatted } }));
   }, [currentDate]);
 
+  const [forecastDateStr, setForecastDateStr] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const forecasts = JSON.parse(localStorage.getItem('forecasts_1') || "[]");
+      if (forecasts.length > 0) {
+        setForecastDateStr(forecasts[0].date);
+      }
+    } catch {}
+    
+    // Listen for storage changes in case dashboard updates it
+    const handleStorage = () => {
+      try {
+        const forecasts = JSON.parse(localStorage.getItem('forecasts_1') || "[]");
+        if (forecasts.length > 0) {
+          setForecastDateStr(forecasts[0].date);
+        }
+      } catch {}
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  const handleFastForward = () => {
+    if (!forecastDateStr) return;
+    const dateObj = new Date(forecastDateStr);
+    if (!isNaN(dateObj.getTime())) {
+      setCurrentDate(dateObj);
+    }
+  };
+
   if (!currentDate) return null;
 
   return (
@@ -53,8 +86,13 @@ export default function DateSimulator() {
         </span>
       </div>
       <div className="flex gap-2">
+        {isActive && forecastDateStr && (
+          <button data-tour="date-simulator-btn" onClick={handleFastForward} className="px-4 py-2 flex items-center justify-center bg-teal-600/20 border border-teal-500/50 hover:bg-teal-600/40 text-teal-300 rounded-xl font-semibold text-sm transition-colors whitespace-nowrap">
+            Skip to {forecastDateStr}
+          </button>
+        )}
         <button onClick={handleReset} className="px-4 py-2 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium text-sm transition-colors">Reset</button>
-        <button onClick={handleNextDay} className="w-10 h-10 flex items-center justify-center bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xl transition-colors">+</button>
+        <button onClick={handleNextDay} className="w-10 h-10 flex items-center justify-center bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-xl transition-colors">+</button>
       </div>
     </div>
   );

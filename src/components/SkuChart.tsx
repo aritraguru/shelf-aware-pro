@@ -78,7 +78,7 @@ export default function SkuChart({ sku, simulatedDate, distributorName, distribu
           <h3 className="font-semibold text-slate-100">{sku.name}</h3>
           <p className="text-sm text-slate-400">Margin: ${sku.margin} | Cost: ${sku.cost}</p>
           <p className="text-sm font-medium mt-1 text-slate-300">
-            Next Predicted Order: <span className="text-white bg-slate-800 px-2 py-0.5 rounded ml-1">{sku.nextOrderDate}</span>
+            Next Predicted Order: <span data-tour="forecast-date-0" className="text-white bg-slate-800 px-2 py-0.5 rounded ml-1">{sku.nextOrderDate}</span>
           </p>
           <p className="text-xs text-teal-500/70 mt-1">
             Forecasted Qty: {sku.forecastedDemand} units
@@ -87,6 +87,7 @@ export default function SkuChart({ sku, simulatedDate, distributorName, distribu
         
         <div className="flex flex-col items-end">
           <button 
+            data-tour="manual-override-btn"
             onClick={handleOverride}
             disabled={justSent}
             className={`flex items-center gap-2 px-3 py-1.5 rounded border text-xs font-semibold text-white shadow-sm transition-colors ${justSent ? 'bg-slate-600 border-slate-700' : btnColor}`}
@@ -102,7 +103,7 @@ export default function SkuChart({ sku, simulatedDate, distributorName, distribu
         </div>
       </div>
       
-      <div className="flex-1 w-full min-h-0">
+      <div data-tour="sku-chart-0" className="flex-1 w-full min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />

@@ -208,6 +208,8 @@ export default function DistributorChatClient({ distributorId }: { distributorId
     const userMessage = input.trim();
     setInput("");
     
+    window.dispatchEvent(new CustomEvent('demo_order_placed'));
+    
     const activeDate = simulatedDate || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
     const newUserMsg = { 
@@ -304,8 +306,9 @@ export default function DistributorChatClient({ distributorId }: { distributorId
       {/* Chat Area */}
       <div className="flex-1 flex flex-col bg-[#efeae2] relative h-full">
         <header className="bg-[#f0f2f5] h-16 px-4 flex items-center gap-4 border-b border-gray-200 shrink-0 z-10">
-          <Link href="/" className="md:hidden text-gray-500 hover:text-gray-700">
+          <Link data-tour="back-to-dashboard-btn" href={`/dashboard/${distributorId}`} className="text-gray-500 hover:text-gray-700 flex items-center gap-2">
             <ArrowLeft className="w-6 h-6" />
+            <span className="hidden md:inline text-sm font-medium">Dashboard</span>
           </Link>
           <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center shrink-0 overflow-hidden">
             <Bot className="w-6 h-6 text-white" />
@@ -316,6 +319,7 @@ export default function DistributorChatClient({ distributorId }: { distributorId
           </div>
           <div className="ml-auto">
             <select 
+              data-tour="lang-dropdown"
               value={language}
               onChange={(e) => {
                 const val = e.target.value;
@@ -348,7 +352,9 @@ export default function DistributorChatClient({ distributorId }: { distributorId
                   </div>
                 )}
                 <div className={clsx("flex flex-col max-w-[85%]", msg.sender === 'user' ? "ml-auto items-end" : "mr-auto items-start")}>
-                  <div className={clsx(
+                  <div 
+                    data-tour={index === messages.length - 1 ? "chat-latest-msg" : undefined}
+                    className={clsx(
                     "px-4 py-2 rounded-lg shadow-sm relative whitespace-pre-wrap text-[14.2px]", 
                     msg.sender === 'user' ? "bg-[#d9fdd3] rounded-tr-none text-gray-900" : "bg-white rounded-tl-none text-gray-900"
                   )}>
@@ -368,6 +374,7 @@ export default function DistributorChatClient({ distributorId }: { distributorId
         <div className="bg-[#f0f2f5] p-3 flex items-center px-4 py-3 shrink-0 gap-3">
           <form onSubmit={handleSubmit} className="flex flex-1 gap-2 bg-white rounded-lg items-center pr-2 shadow-sm">
             <input
+              data-tour="chat-input"
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}

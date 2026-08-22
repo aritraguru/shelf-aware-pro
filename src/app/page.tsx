@@ -38,40 +38,40 @@ export default function Home() {
 
         {/* Portal Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-          {/* Card 1: Internal Sales Rep View */}
-          <Link href="/dashboard/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/60 rounded-3xl transition-all duration-300 group-hover:border-teal-500/50 group-hover:shadow-2xl group-hover:shadow-teal-500/10" />
-            
+          {/* Card 1: Internal Dashboard View */}
+          <Link data-tour="sales-dashboard-link-1" href="/dashboard/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 to-teal-950/70 backdrop-blur-xl border border-slate-700/60 rounded-3xl transition-all duration-300 group-hover:border-teal-400/50 group-hover:shadow-2xl group-hover:shadow-teal-500/10" />
+
             <div className="relative p-6 md:p-8 flex flex-col h-full justify-between z-10 min-h-[220px]">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="p-2.5 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400">
-                    <Users className="w-6 h-6" />
+                    <BarChart3 className="w-6 h-6" />
                   </div>
                   <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-700/40 text-xs text-teal-300 font-medium">
-                    <BarChart3 className="w-3.5 h-3.5" />
-                    <span>Real-time Telemetry</span>
+                    <Bot className="w-3.5 h-3.5" />
+                    <span>Gemini 1.5 Pro Demand Prediction</span>
                   </span>
                 </div>
 
                 <h2 className="text-xl md:text-2xl font-semibold text-white group-hover:text-teal-300 transition-colors mb-2">
-                  Sales Rep View
+                  Sales Rep Dashboard
                 </h2>
 
                 <p className="text-slate-300 text-sm leading-relaxed mb-4">
-                  Internal monitoring console to observe upcoming stockouts, verify MILP-driven restock allocations, and track AI bot outreach telemetry.
+                  Internal viewport predicting distributor stockouts before they happen, visualizing order spikes and baseline consumption patterns.
                 </p>
               </div>
 
               <div className="inline-flex items-center gap-2 text-teal-400 font-medium text-sm group-hover:translate-x-1 transition-transform">
-                <span>Enter Sales Rep Console</span>
+                <span>Enter Sales Rep View</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
             </div>
           </Link>
 
           {/* Card 2: External Distributor View */}
-          <Link href="/distributor/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
+          <Link data-tour="chat-link-1" href="/distributor/1" className="group relative block rounded-3xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-400">
             <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 to-teal-950/70 backdrop-blur-xl border border-slate-700/60 rounded-3xl transition-all duration-300 group-hover:border-cyan-400/50 group-hover:shadow-2xl group-hover:shadow-cyan-500/10" />
 
             <div className="relative p-6 md:p-8 flex flex-col h-full justify-between z-10 min-h-[220px]">
