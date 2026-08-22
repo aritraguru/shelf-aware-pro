@@ -185,12 +185,25 @@ export default function Spotlight() {
         >
           {/* Animated Sprite */}
           <div className={`absolute bottom-0 h-full w-[120px] pointer-events-none z-20 ${
-             (tooltipStyle.left as number) > window.innerWidth / 2 ? '-left-[100px]' : '-right-[100px]'
+             (() => {
+                const isWhatsappStep = currentStepIndex >= 6;
+                const spaceOnLeft = (tooltipStyle.left as number) >= 100;
+                const isRightSide = (tooltipStyle.left as number) > window.innerWidth / 2;
+                const putCatOnLeft = (isWhatsappStep && spaceOnLeft) || isRightSide;
+                return putCatOnLeft ? '-left-[100px]' : '-right-[100px]';
+             })()
           }`}>
              <CatTutor 
                 state={['Idle', 'Walk', 'Run', 'Slide', 'Jump'][currentStepIndex % 5] as any} 
                 fps={8} 
-                flip={(tooltipStyle.left as number) <= window.innerWidth / 2}
+                flip={(() => {
+                   const isWhatsappStep = currentStepIndex >= 6;
+                   const spaceOnLeft = (tooltipStyle.left as number) >= 100;
+                   const isRightSide = (tooltipStyle.left as number) > window.innerWidth / 2;
+                   const putCatOnLeft = (isWhatsappStep && spaceOnLeft) || isRightSide;
+                   // if cat is on the left, flip it so it faces right (towards tooltip)
+                   return !putCatOnLeft; 
+                })()}
                 className="w-full h-full" 
              />
           </div>

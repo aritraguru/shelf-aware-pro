@@ -4,7 +4,7 @@ export default async function DashboardPage(props: { params: Promise<{ id: strin
   const { id } = await props.params;
   
   return (
-    <div className="h-full flex flex-col bg-gray-50/50">
+    <div className="h-full flex flex-col bg-transparent">
       <DashboardClient distributorId={id} />
     </div>
   );

@@ -155,14 +155,14 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
 
   return (
     <>
-      <div className="flex-1 h-full flex flex-col p-8 overflow-hidden">
-        <header className="mb-6 flex justify-between items-end shrink-0">
+      <div className="flex-1 h-full flex flex-col p-4 md:p-6 overflow-hidden">
+        <header className="mb-3 flex justify-between items-end shrink-0">
           <div>
-            <Link data-tour="back-to-home-btn" href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-teal-400 transition-colors mb-4 text-sm font-medium">
+            <Link data-tour="back-to-home-btn" href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-teal-400 transition-colors mb-2 text-sm font-medium">
               <ArrowLeft className="w-4 h-4" />
               Back to Home
             </Link>
-            <h1 className="text-3xl font-semibold tracking-tight text-white mb-2 drop-shadow-md">
+            <h1 className="text-2xl font-semibold tracking-tight text-white mb-1 drop-shadow-md">
               {distributor.name}
             </h1>
             <p className="text-slate-300 drop-shadow-sm">
@@ -185,9 +185,9 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
         </header>
 
         <div className="flex-1 min-h-0 flex flex-col">
-          <h2 className="text-xl font-medium tracking-tight text-slate-200 drop-shadow-md mb-4 shrink-0">SKU Inventory & Stockout Forecast</h2>
+          <h2 className="text-lg font-medium tracking-tight text-slate-200 drop-shadow-md mb-2 shrink-0">SKU Inventory & Stockout Forecast</h2>
           <div className="flex-1 min-h-0 min-w-0">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-full">
               {displaySkus.map((sku: any) => (
                 <div key={sku.id} className="h-full min-h-0">
                   <SkuChart 
