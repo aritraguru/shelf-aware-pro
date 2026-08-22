@@ -6,9 +6,9 @@ import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden bg-transparent text-slate-100 flex flex-col justify-between">
+    <main className="relative h-full w-full overflow-y-auto overflow-x-hidden bg-transparent text-slate-100 flex flex-col justify-between">
       {/* Foreground Content */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-4 flex-1 flex flex-col justify-center h-screen overflow-hidden">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-4 flex-1 flex flex-col justify-center min-h-0 overflow-y-auto">
         
         {/* Navigation / Top Badge */}
         <header className="mb-8 text-center">

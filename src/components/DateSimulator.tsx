@@ -44,7 +44,7 @@ export default function DateSimulator() {
   if (!currentDate) return null;
 
   return (
-    <div className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl border border-slate-700/50 shadow-2xl">
+    <div className="flex items-center gap-3 bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl border border-slate-700/50 shadow-2xl">
       <div className="flex items-center gap-3 px-4 py-2 bg-slate-800 rounded-xl text-teal-400">
         <Calendar className="w-5 h-5" />
         <span className="text-base font-semibold whitespace-nowrap">Simulated Date:</span>
