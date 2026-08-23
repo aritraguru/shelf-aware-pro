@@ -2,9 +2,6 @@
 
 import React from "react";
 import { useTour } from "./TourProvider";
-import DateSimulator from "./DateSimulator";
-
-import { Volume2, VolumeX } from "lucide-react";
 
 export default function MainContentWrapper({ children }: { children: React.ReactNode }) {
   const { hasSeenDemo, showIntro, resetDemo, isMuted, setIsMuted, isActive } = useTour();
@@ -16,32 +13,8 @@ export default function MainContentWrapper({ children }: { children: React.React
   }
 
   return (
-    <>
-      {/* Header Bar - Absolute positioned so it floats over the content */}
-      <div className="absolute top-0 right-0 z-50 flex justify-end gap-4 items-start px-6 py-4 pointer-events-none">
-        <div className="flex gap-4 items-center pointer-events-auto">
-          {isActive && (
-            <button 
-              onClick={() => setIsMuted(!isMuted)}
-              className="w-10 h-10 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-teal-400 font-semibold rounded-xl transition-colors border border-slate-700/50 shadow-lg"
-            >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </button>
-          )}
-          <button 
-            onClick={resetDemo}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-teal-400 font-semibold rounded-xl text-sm transition-colors border border-slate-700/50 shadow-lg"
-          >
-            Restart Demo
-          </button>
-          <DateSimulator />
-        </div>
-      </div>
-
-      {/* Main Content Layer */}
-      <div className="relative z-10 flex-1 w-full min-h-0">
-        {children}
-      </div>
-    </>
+    <div className="relative z-10 flex-1 w-full min-h-0 flex flex-col">
+      {children}
+    </div>
   );
 }

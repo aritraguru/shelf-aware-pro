@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Loader2, Send, Bot, Check, CheckCheck, ArrowLeft } from "lucide-react";
 import clsx from "clsx";
 import Link from "next/link";
+import DemoHeader from "./DemoHeader";
 
 export default function DistributorChatClient({ distributorId }: { distributorId: string }) {
   const [data, setData] = useState<any>(null);
@@ -262,8 +263,10 @@ export default function DistributorChatClient({ distributorId }: { distributorId
   }
 
   return (
-    <div className="flex w-full h-full bg-white overflow-hidden">
-      {/* WhatsApp Sidebar (Contacts) */}
+    <div className="flex flex-col w-full h-full overflow-hidden bg-transparent">
+      <DemoHeader />
+      <div className="flex w-full flex-1 bg-white overflow-hidden min-h-0">
+        {/* WhatsApp Sidebar (Contacts) */}
       <div className="w-[30%] min-w-[300px] border-r border-gray-200 bg-white flex flex-col hidden md:flex">
         <header className="bg-[#f0f2f5] h-16 px-4 flex items-center border-b border-gray-200 shrink-0">
           <Link href="/" className="mr-4 text-gray-500 hover:text-gray-700">
@@ -391,6 +394,7 @@ export default function DistributorChatClient({ distributorId }: { distributorId
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 }

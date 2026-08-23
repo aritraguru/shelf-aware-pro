@@ -3,10 +3,14 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 import { ShaderBackground } from "@/components/ui/manu";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
+import DemoHeader from "@/components/DemoHeader";
 
 export default function Home() {
   return (
     <main className="relative h-full w-full overflow-hidden bg-transparent text-slate-100 flex flex-col justify-between">
+      <div className="w-full shrink-0 z-50">
+        <DemoHeader />
+      </div>
       {/* Foreground Content */}
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-2 flex-1 flex flex-col justify-center min-h-0">
         

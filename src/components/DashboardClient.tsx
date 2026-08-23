@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SkuChart from "./SkuChart";
 import { Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import DemoHeader from "./DemoHeader";
 
 export default function DashboardClient({ distributorId }: { distributorId: string }) {
   const [data, setData] = useState<any>(null);
@@ -155,7 +156,8 @@ export default function DashboardClient({ distributorId }: { distributorId: stri
 
   return (
     <>
-      <div className="flex-1 h-full flex flex-col p-4 md:p-6 pt-24 md:pt-24 overflow-hidden">
+      <div className="flex-1 h-full flex flex-col p-4 md:p-6 overflow-hidden">
+        <DemoHeader />
         <header className="mb-3 flex justify-between items-end shrink-0">
           <div>
             <Link data-tour="back-to-home-btn" href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-teal-400 transition-colors mb-2 text-sm font-medium">
