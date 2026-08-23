@@ -10,8 +10,7 @@ export async function POST(request: Request) {
       const yyyy = d.getFullYear();
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const dd = String(d.getDate()).padStart(2, '0');
-      const baseDateStr = ${yyyy}--;
-      
+      const baseDateStr = `${yyyy}-${mm}-${dd}`;
       // Delete any data AFTER the base date
       await supabaseAdmin
         .from('historical_data_new')
