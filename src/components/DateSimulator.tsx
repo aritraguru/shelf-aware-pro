@@ -10,9 +10,23 @@ export default function DateSimulator() {
   const { isActive } = useTour();
 
   useEffect(() => {
-    const now = new Date();
-    setCurrentDate(now);
-    setBaseDate(now);
+    const storedDate = localStorage.getItem('global_simulated_date');
+    const storedBase = localStorage.getItem('global_base_date');
+    
+    if (storedBase) {
+      setBaseDate(new Date(storedBase));
+    } else {
+      const now = new Date();
+      setBaseDate(now);
+      localStorage.setItem('global_base_date', now.toISOString());
+    }
+
+    if (storedDate) {
+      setCurrentDate(new Date(storedDate));
+    } else {
+      const now = new Date();
+      setCurrentDate(now);
+    }
   }, []);
 
   const handleNextDay = () => {
