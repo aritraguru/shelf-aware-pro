@@ -137,21 +137,40 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
     if (orderEvents.length > 0) {
       const orderDates = orderEvents.map(h => new Date(h.date).getTime());
       
-      if (orderDates.length >= 2) {
+      if (orderDates.length >= 3) {
+        // Use ML (Linear Regression) to predict next order date and size
+        // We will regress the days between orders to predict the next interval
         const intervals = [];
+        const sizes = [];
         for (let i = 1; i < orderDates.length; i++) {
-          intervals.push((orderDates[i] - orderDates[i-1]) / (1000 * 60 * 60 * 24));
+          intervals.push([i, (orderDates[i] - orderDates[i-1]) / (1000 * 60 * 60 * 24)]);
+          sizes.push([i, orderEvents[i].units_sold]);
         }
-        const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        
+        const intervalModel = regression.linear(intervals);
+        const nextIndex = orderDates.length;
+        const predictedInterval = intervalModel.predict(nextIndex)[1];
+        
+        const sizeModel = regression.linear(sizes);
+        const predictedSize = sizeModel.predict(nextIndex)[1];
+        
+        const safeInterval = Math.max(1, predictedInterval); // At least 1 day
         const lastOrderTime = orderDates[orderDates.length - 1];
-        const nextTime = lastOrderTime + avgInterval * (1000 * 60 * 60 * 24);
+        const nextTime = lastOrderTime + safeInterval * (1000 * 60 * 60 * 24);
+        
         nextOrderDate = new Date(nextTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        forecastedDemand = Math.max(5, Math.ceil(predictedSize));
       } else {
-        nextOrderDate = new Date(orderDates[0] + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        // Fallback to simple average for less than 3 data points
+        const avgSize = orderEvents.reduce((acc, h) => acc + h.units_sold, 0) / orderEvents.length;
+        forecastedDemand = Math.max(5, Math.ceil(avgSize));
+        if (orderDates.length === 2) {
+          const interval = (orderDates[1] - orderDates[0]) / (1000 * 60 * 60 * 24);
+          nextOrderDate = new Date(orderDates[1] + interval * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } else {
+          nextOrderDate = new Date(orderDates[0] + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
       }
-      
-      const avgSize = orderEvents.reduce((acc, h) => acc + h.units_sold, 0) / orderEvents.length;
-      forecastedDemand = Math.max(5, Math.ceil(avgSize));
     }
 
     return {

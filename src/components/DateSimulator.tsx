@@ -36,7 +36,7 @@ export default function DateSimulator() {
     setCurrentDate(next);
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (!baseDate) return;
     setCurrentDate(baseDate);
     const formatted = baseDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -48,6 +48,13 @@ export default function DateSimulator() {
       localStorage.removeItem(`chat_messages_${i}`);
       localStorage.removeItem(`alerts_sent_${i}`);
     }
+    
+    // Erase future data from the database
+    await fetch('/api/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ baseDate: baseDate.toISOString() })
+    });
   };
 
   useEffect(() => {

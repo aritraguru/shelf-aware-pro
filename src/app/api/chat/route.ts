@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { supabase, supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 
 function parseHeuristic(message: string) {
   const lower = message.toLowerCase().trim();
@@ -107,28 +107,32 @@ DO NOT translate any product or SKU names. Keep numerical quantities in standard
   // Perform Supabase DB updates if configured
   if (isSupabaseConfigured && distributorId && intent !== 'unknown') {
     try {
-      const { data: interaction } = await supabase
-        .from('bot_interactions')
-        .insert({
-          distributor_id: distributorId,
-          proposed_order_json: { source: 'chat_nlp', intent },
-          status: intent === 'approve_order' ? 'ACCEPTED' : intent === 'cancel_order' ? 'REJECTED' : 'MODIFIED'
-        })
-        .select()
-        .single();
+      try {
+        const { data: interaction } = await supabaseAdmin
+          .from('bot_interactions')
+          .insert({
+            distributor_id: distributorId,
+            proposed_order_json: { source: 'chat_nlp', intent },
+            status: intent === 'approve_order' ? 'ACCEPTED' : intent === 'cancel_order' ? 'REJECTED' : 'MODIFIED'
+          })
+          .select()
+          .single();
 
-      if (intent === 'cancel_order' || intent === 'modify_demand') {
-        await supabase.from('ml_feedback_loop').insert({
-          distributor_id: distributorId,
-          interaction_id: interaction?.id,
-          feedback_type: intent === 'cancel_order' ? 'REJECTION' : 'MODIFICATION',
-          distributor_input: message,
-          original_forecast: newDemand ? { newDemand } : {}
-        });
+        if (intent === 'cancel_order' || intent === 'modify_demand') {
+          await supabaseAdmin.from('ml_feedback_loop').insert({
+            distributor_id: distributorId,
+            interaction_id: interaction?.id,
+            feedback_type: intent === 'cancel_order' ? 'REJECTION' : 'MODIFICATION',
+            distributor_input: message,
+            original_forecast: newDemand ? { newDemand } : {}
+          });
+        }
+      } catch (trackErr) {
+        console.warn("Tracking tables missing or failed:", trackErr);
       }
 
       if (intent === 'approve_order' || intent === 'modify_demand') {
-        const { data: skus } = await supabase
+        const { data: skus } = await supabaseAdmin
           .from('skus_new')
           .select('*')
           .eq('distributor_id', distributorId)
@@ -137,10 +141,14 @@ DO NOT translate any product or SKU names. Keep numerical quantities in standard
         if (skus && skus.length > 0) {
           const targetSku = skus[0];
           const qtyToAdd = intent === 'modify_demand' && newDemand !== null ? newDemand : 100;
-          await supabase
-            .from('skus_new')
-            .update({ current_inventory: (targetSku.current_inventory || 0) + qtyToAdd })
-            .eq('id', targetSku.id);
+          try {
+            await supabaseAdmin
+              .from('skus_new')
+              .update({ current_inventory: (targetSku.current_inventory || 0) + qtyToAdd })
+              .eq('id', targetSku.id);
+          } catch (invErr) {
+            console.warn("Failed to update inventory, column might be missing:", invErr);
+          }
             
           // Add this order to the historical graph data
           let orderDate = new Date();
@@ -154,7 +162,7 @@ DO NOT translate any product or SKU names. Keep numerical quantities in standard
           const dd = String(orderDate.getDate()).padStart(2, '0');
           const localDateStr = `${yyyy}-${mm}-${dd}`;
           
-          await supabase
+          await supabaseAdmin
             .from('historical_data_new')
             .insert({
               sku_id: targetSku.id,
