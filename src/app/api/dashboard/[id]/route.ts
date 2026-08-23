@@ -140,8 +140,8 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
       if (orderDates.length >= 3) {
         // Use ML (Linear Regression) to predict next order date and size
         // We will regress the days between orders to predict the next interval
-        const intervals = [];
-        const sizes = [];
+        const intervals: [number, number][] = [];
+        const sizes: [number, number][] = [];
         for (let i = 1; i < orderDates.length; i++) {
           intervals.push([i, (orderDates[i] - orderDates[i-1]) / (1000 * 60 * 60 * 24)]);
           sizes.push([i, orderEvents[i].units_sold]);
